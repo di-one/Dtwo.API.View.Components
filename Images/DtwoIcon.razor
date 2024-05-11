@@ -1,0 +1,23 @@
+﻿@implements IIcon
+
+@{
+    var component = ComponentResolver.ResolveComponent<IIcon>();
+    if (component != default)
+    {
+        <DynamicComponent Type="@component.GetType()" Parameters="@GetParameters()" />
+    }
+}
+
+@code {
+    [Parameter] public string Icon { get; set; }
+    [Parameter] public EIconColor Color { get; set; }
+
+    private Dictionary<string, object> GetParameters()
+    {
+        return new Dictionary<string, object>
+            {
+                ["Icon"] = Icon,
+                ["Color"] = Color
+            };
+    }
+}

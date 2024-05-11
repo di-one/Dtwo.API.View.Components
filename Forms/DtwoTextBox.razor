@@ -1,0 +1,41 @@
+﻿@implements ITextBox
+
+@{
+    var component = ComponentResolver.ResolveComponent<ITextBox>();
+    if (component != default)
+    {
+        <DynamicComponent Type="@component.GetType()" Parameters="@GetParameters()" />
+    }
+    else
+    {
+    }
+}
+
+@code {
+    [Parameter] public EventCallback<string> Change { get; set; }
+    [Parameter] public string PlaceHolder { get; set; }
+    [Parameter] public int MaxLength { get; set; } = 255;
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public bool AutoComplete { get; set; }
+    [Parameter] public string Value { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AdditionalAttributes { get; set; }
+    [Parameter] public string Name { get; set; }
+
+    private Dictionary<string, object> GetParameters()
+    {
+        var parameters = new Dictionary<string, object>
+        {
+            { nameof(Change), Change },
+            { nameof(PlaceHolder), PlaceHolder },
+            { nameof(MaxLength), MaxLength },
+            { nameof(Disabled), Disabled },
+            { nameof(AutoComplete), AutoComplete },
+            { nameof(Value), Value },
+            { nameof(AdditionalAttributes), AdditionalAttributes },
+            { nameof(Name), Name }
+        };
+
+        return parameters;
+    }
+}

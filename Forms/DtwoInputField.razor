@@ -1,0 +1,91 @@
+﻿@implements IDisposable
+@implements IInputField
+
+@* @{
+    var dropdownComponent = ComponentResolver.ResolveComponent<IInputField>();
+    if (dropdownComponent != default)
+    {
+        <DynamicComponent Type="@dropdownComponent.GetType()" Parameters="@GetParameters()" />
+    }
+    else
+    {
+
+    }
+} *@
+
+<DtwoStack Orientation=EStackOrientation.Horizontal Gap="5">
+	<DtwoTextBox
+		PlaceHolder=PlaceHolder
+		@bind-Value=Value.KeyString
+		Disabled=Disabled
+		Name=Name
+	/>
+	<DtwoButton OnClicked="(args) => Rec()">Rec</DtwoButton>
+</DtwoStack>
+
+@code {
+    [Parameter] public string PlaceHolder { get; set; }
+	[Parameter] public API.InputKey Value { get; set; }
+	[Parameter] public bool Disabled { get; set; }
+	[Parameter] public string Label { get; set; }
+	[Parameter] public Action<API.InputKey> Change { get; set; }
+	[Parameter] public string Name { get; set; }
+
+	private KeyboardListener m_kbl;
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+	}
+
+	private void OnKeyUp(KeyboardListener.VirtualKeys keyCode)
+	{
+		//if (system == false)
+		//{
+		int keyId = (int)keyCode;
+		string keyString = keyCode.ToString();
+
+		Value.KeyString = keyString;
+		Value.KeyId = keyId;
+
+		Change?.Invoke(Value);
+
+		InvokeAsync(() => StateHasChanged());
+		//}
+	}
+
+	private void Exit()
+	{
+		m_kbl.Dispose();
+	}
+
+	private void Rec()
+	{
+		if (m_kbl != null)
+		{
+			m_kbl.Dispose();
+		}
+
+		m_kbl = new KeyboardListener();
+		m_kbl.ListenFirstKey(OnKeyUp);
+	}
+
+	public void Dispose()
+	{
+		m_kbl?.Dispose();
+	}
+
+    // private Dictionary<string, object> GetParameters()
+    // {
+    //     return new Dictionary<string, object>
+    //     {
+    //         { "PlaceHolder", PlaceHoler },
+    //         { "Value", Value },
+    //         { "Disabled", Disabled },
+    //         { "Label", Label },
+    //         { "Change", Change },
+    //         { "Name", Name }
+    //     };
+    // }
+
+}

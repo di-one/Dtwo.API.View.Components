@@ -1,0 +1,33 @@
+﻿@implements IMainWindowTitlebar
+
+@{
+    var component = ComponentResolver.ResolveComponent<IMainWindowTitlebar>();
+    if (component != default)
+    {
+        <DynamicComponent Type="@component.GetType()" Parameters="@GetParameters()" />
+    }
+}
+
+@code {
+   [Parameter] public Action<MouseEventArgs> OnMouseMove { get; set; }
+    [Parameter] public Action<MouseEventArgs> OnMouseDown { get; set; }
+   [Parameter] public Action<MouseEventArgs> OnMouseUp { get; set; }
+
+   [Parameter] public Action OnClickMinimize { get; set; }
+   [Parameter] public Action OnClickMaximize { get; set; }
+   [Parameter] public Action OnClickClose { get; set; }
+
+
+    private Dictionary<string, object> GetParameters()
+    {
+        return new Dictionary<string, object>
+            {
+                ["OnMouseMove"] = OnMouseMove,
+                ["OnMouseDown"] = OnMouseDown,
+                ["OnMouseUp"] = OnMouseUp,
+                ["OnClickMinimize"] = OnClickMinimize,
+                ["OnClickMaximize"] = OnClickMaximize,
+                ["OnClickClose"] = OnClickClose
+            };
+    }
+}

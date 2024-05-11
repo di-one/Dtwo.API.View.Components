@@ -1,0 +1,32 @@
+﻿@implements ICard
+
+@{
+    var component = ComponentResolver.ResolveComponent<ICard>();
+    if (component != default)
+    {
+        <DynamicComponent Type="@component.GetType()" Parameters="@GetParameters()" />
+    }
+    else
+    {
+        <div class="card">
+            @ChildContent
+        </div>
+    }
+}
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public Theming.EVariant Variant { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AdditionalAttributes { get; set; }
+
+    private Dictionary<string, object> GetParameters()
+    {
+        return new Dictionary<string, object>
+            {
+                ["ChildContent"] = ChildContent,
+                ["Variant"] = Variant,
+                ["AdditionalAttributes"] = AdditionalAttributes
+            };
+    }
+}

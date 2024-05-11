@@ -1,0 +1,45 @@
+﻿@implements IStack
+
+@{
+    var component = ComponentResolver.ResolveComponent<IStack>();
+    if (component != default)
+    {
+        <DynamicComponent Type="@component.GetType()" Parameters="@GetParameters()" />
+    }
+    else
+    {
+        <div class="@GetDefaultClass">
+            @ChildContent
+        </div>
+    }
+}
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AdditionalAttributes { get; set; }
+    [Parameter] public EStackOrientation Orientation { get; set; } = EStackOrientation.Vertical;
+    [Parameter] public EJustifyContent JustifyContent { get; set; } = EJustifyContent.Normal;
+    [Parameter] public string Gap { get; set; } = "0";
+    [Parameter] public EWrap Wrap { get; set; } = EWrap.NoWrap;
+
+    private string GetDefaultClass => Orientation switch
+    {
+        EStackOrientation.Horizontal => $"hstack gap-{Gap}",
+        EStackOrientation.Vertical => $"vstack gap-{Gap}",
+        _ => string.Empty
+    };
+
+    private Dictionary<string, object> GetParameters()
+    {
+        return new Dictionary<string, object>
+            {
+                ["ChildContent"] = ChildContent,
+                ["AdditionalAttributes"] = AdditionalAttributes,
+                ["Orientation"] = Orientation,
+                ["Gap"] = Gap,
+                ["JustifyContent"] = JustifyContent,
+                ["Wrap"] = Wrap
+            };
+    }
+}

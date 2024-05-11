@@ -1,0 +1,44 @@
+﻿@implements IMainLayout
+
+@{
+    var component = ComponentResolver.ResolveComponent<IMainLayout>();
+    if (component != default)
+    {
+        <DynamicComponent Type="@component.GetType()" Parameters="@GetParameters()" />
+    }
+    else
+    {
+        <div class="main-layout">
+            <div class="main-layout__sidebar">
+                <div class="main-layout__sidebar__content">
+                    @foreach (var entry in Settings.SideBarEntries)
+                    {
+                        <MainLayoutSidebarEntry Item="entry" />
+                    }
+                </div>
+            </div>
+            <div class="main-layout__content">
+            @ChildContent
+            </div>
+        </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public MainLayoutSettings Settings { get; set; }
+    [Parameter] 
+    public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    public bool IsLoading { get; set; }
+
+    private Dictionary<string, object> GetParameters()
+    {
+        return new Dictionary<string, object>
+            {
+                ["Settings"] = Settings,
+                ["IsLoading"] = IsLoading,
+                ["ChildContent"] = ChildContent
+            };
+    }
+}

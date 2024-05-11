@@ -1,0 +1,75 @@
+﻿@implements IGridItem
+
+@{
+    var component = ComponentResolver.ResolveComponent<IGridItem>();
+    if (component != default)
+    {
+        <DynamicComponent Type="@component.GetType()" Parameters="@GetParameters()" />
+    }
+    else
+    {
+
+    }
+}
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AdditionalAttributes { get; set; }
+    [Parameter] public EJustifyContent JustifyContent { get; set; }
+
+    [Parameter] public int? Size { get; set; } = null;
+    [Parameter] public int? SizeXS { get; set; } = null;
+    [Parameter] public int? SizeSM { get; set; } = null;
+    [Parameter] public int? SizeMD { get; set; } = null;
+    [Parameter] public int? SizeLG { get; set; } = null;
+    [Parameter] public int? SizeXL { get; set; } = null;
+    [Parameter] public int? SizeXX { get; set; } = null;
+    [Parameter] public int? Offset { get; set; } = null;
+    [Parameter] public int? OffsetXS { get; set; } = null;
+    [Parameter] public int? OffsetSM { get; set; } = null;
+    [Parameter] public int? OffsetMD { get; set; } = null;
+    [Parameter] public int? OffsetLG { get; set; } = null;
+    [Parameter] public int? OffsetXL { get; set; } = null;
+    [Parameter] public int? OffsetXX { get; set; } = null;
+
+
+    [Parameter] public string Order { get; set; } = "";
+    [Parameter] public string OrderXS { get; set; } = "";
+    [Parameter] public string OrderSM { get; set; } = "";
+    [Parameter] public string OrderMD { get; set; } = "";
+    [Parameter] public string OrderLG { get; set; } = "";
+    [Parameter] public string OrderXL { get; set; } = "";
+    [Parameter] public string OrderXX { get; set; } = "";
+
+    private Dictionary<string, object?> GetParameters()
+    {
+        return new Dictionary<string, object?>
+            {
+                ["ChildContent"] = ChildContent,
+                ["AdditionalAttributes"] = AdditionalAttributes,
+                ["JustifyContent"] = JustifyContent,
+                ["Size"] = Size,
+                ["SizeXS"] = SizeXS,
+                ["SizeSM"] = SizeSM,
+                ["SizeMD"] = SizeMD,
+                ["SizeLG"] = SizeLG,
+                ["SizeXL"] = SizeXL,
+                ["SizeXX"] = SizeXX,
+                ["Offset"] = Offset,
+                ["OffsetXS"] = OffsetXS,
+                ["OffsetSM"] = OffsetSM,
+                ["OffsetMD"] = OffsetMD,
+                ["OffsetLG"] = OffsetLG,
+                ["OffsetXL"] = OffsetXL,
+                ["OffsetXX"] = OffsetXX,
+                ["Order"] = Order,
+                ["OrderXS"] = OrderXS,
+                ["OrderSM"] = OrderSM,
+                ["OrderMD"] = OrderMD,
+                ["OrderLG"] = OrderLG,
+                ["OrderXL"] = OrderXL,
+                ["OrderXX"] = OrderXX
+            };
+    }
+}

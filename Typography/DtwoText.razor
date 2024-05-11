@@ -1,0 +1,33 @@
+﻿@implements IText
+
+@{
+    var component = ComponentResolver.ResolveComponent<IText>();
+    if (component != default)
+    {
+        <DynamicComponent Type="@component.GetType()" Parameters="@GetParameters()" />
+    }
+    else
+    {
+        <p>@ChildContent</p>
+    }
+}
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AdditionalAttributes { get; set; }
+
+    [Parameter] public ETextAlign TextAlign { get; set; }
+    [Parameter] public ETextStyle TextStyle { get; set; }
+
+    private Dictionary<string, object> GetParameters()
+    {
+        return new Dictionary<string, object>
+            {
+                ["ChildContent"] = ChildContent,
+                ["AdditionalAttributes"] = AdditionalAttributes,
+                ["TextAlign"] = TextAlign,
+                ["TextStyle"] = TextStyle
+            };
+    }
+}

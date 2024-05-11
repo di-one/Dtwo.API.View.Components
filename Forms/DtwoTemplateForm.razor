@@ -1,0 +1,33 @@
+﻿@typeparam TItem
+@implements ITemplateForm<TItem>
+
+@{
+    var component = ComponentResolver.ResolveComponent<ITemplateForm<TItem>>();
+    if (component != default)
+    {
+        <DynamicComponent Type="@component.GetType()" Parameters="@GetParameters()" />
+    }
+    else
+    {
+    }
+}
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public TItem Data { get; set; }
+    [Parameter] public EventCallback<TItem> Submit { get; set; }
+    [Parameter] public Dictionary<string, object> AdditionalAttributes { get; set; }
+
+    private Dictionary<string, object> GetParameters()
+    {
+        var parameters = new Dictionary<string, object>
+        {
+            ["ChildContent"] = ChildContent,
+            ["Data"] = Data,
+            ["Submit"] = Submit,
+            ["AdditionalAttributes"] = AdditionalAttributes
+        };
+
+        return parameters;
+    }
+}

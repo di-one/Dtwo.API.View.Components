@@ -1,0 +1,22 @@
+﻿@implements IHyperLink
+
+@{
+    var component = ComponentResolver.ResolveComponent<IHyperLink>();
+    if (component != default)
+    {
+        <DynamicComponent Type="@component.GetType()" Parameters="@GetParameters()" />
+    }
+}
+@code {
+    [Parameter] public string Path { get; set; }
+    [Parameter] public string Text { get; set; }
+
+    private Dictionary<string, object> GetParameters()
+    {
+        return new Dictionary<string, object>
+            {
+                ["Path"] = Path,
+                ["Text"] = Text
+            };
+    }
+}

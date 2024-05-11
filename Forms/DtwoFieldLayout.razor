@@ -1,0 +1,45 @@
+﻿@using Dtwo.API.View.Components.Forms
+
+@implements IFieldLayout
+
+@{
+    var fieldLayoutComponent = ComponentResolver.ResolveComponent<IFieldLayout>();
+    if (fieldLayoutComponent != default)
+    {
+        <DynamicComponent Type="@fieldLayoutComponent.GetType()" Parameters="@GetParameters()" />
+    }
+    else
+    {
+
+    }
+}
+
+@code {
+    [Parameter] public bool AllowCollapse { get; set; }
+    [Parameter] public string ExpandTitle { get; set; }
+    [Parameter] public string CollapseTitle { get; set; }
+    [Parameter] public string ExpandAriaLabel { get; set; }
+    [Parameter] public string CollapseAriaLabel { get; set; }
+    [Parameter] public EventCallback Expand { get; set; }
+    [Parameter] public bool Collapse { get; set; }
+    [Parameter] public string Text { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object> AdditionalAttributes { get; set; }
+
+    private Dictionary<string, object> GetParameters()
+    {
+        return new Dictionary<string, object>
+        {
+            ["AllowCollapse"] = AllowCollapse,
+            ["ExpandTitle"] = ExpandTitle,
+            ["CollapseTitle"] = CollapseTitle,
+            ["ExpandAriaLabel"] = ExpandAriaLabel,
+            ["CollapseAriaLabel"] = CollapseAriaLabel,
+            ["Expand"] = Expand,
+            ["Collapse"] = Collapse,
+            ["Text"] = Text,
+            ["ChildContent"] = ChildContent,
+            ["AdditionalAttributes"] = AdditionalAttributes
+        };
+    }
+}

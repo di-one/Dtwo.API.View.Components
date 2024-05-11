@@ -1,0 +1,29 @@
+﻿@implements IImage
+
+@{
+    var component = ComponentResolver.ResolveComponent<IImage>();
+    if (component != default)
+    {
+        <DynamicComponent Type="@component.GetType()" Parameters="@GetParameters()" />
+    }
+    else
+    {
+    }
+}
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AdditionalAttributes { get; set; }
+    [Parameter] public string Path { get; set; } = "";
+
+    private Dictionary<string, object> GetParameters()
+    {
+        return new Dictionary<string, object>
+            {
+                ["ChildContent"] = ChildContent,
+                ["AdditionalAttributes"] = AdditionalAttributes,
+                ["Path"] = Path
+            };
+    }
+}

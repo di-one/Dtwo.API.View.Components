@@ -1,0 +1,29 @@
+﻿@implements ILabel
+
+@{
+    var dropdownComponent = ComponentResolver.ResolveComponent<ILabel>();
+    if (dropdownComponent != default)
+    {
+        <DynamicComponent Type="@dropdownComponent.GetType()" Parameters="@GetParameters()" />
+    }
+    else
+    {
+
+    }
+}
+
+@code{
+    [Parameter] public string Text { get; set; }
+    [Parameter] public string Component { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object> AdditionalAttributes { get; set; }
+
+    private Dictionary<string, object> GetParameters()
+    {
+        return new Dictionary<string, object>
+        {
+            { "Text", Text },
+            { "Component", Component },
+            { "AdditionalAttributes", AdditionalAttributes }
+        };
+    }
+}

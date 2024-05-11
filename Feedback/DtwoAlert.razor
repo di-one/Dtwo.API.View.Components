@@ -1,0 +1,42 @@
+﻿@implements IAlert
+
+@{
+    var component = ComponentResolver.ResolveComponent<IAlert>();
+    if (component != default)
+    {
+        <DynamicComponent Type="@component.GetType()" Parameters="@GetParameters()" />
+    }
+    else
+    {
+        <div class="@GetDefaultClass" role="alert">
+            @ChildContent
+        </div>
+    }
+}
+
+@code {
+    [Parameter] public EAlertStyle Style { get; set; }
+    [Parameter] public Theming.EVariant Variant { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public bool ShowIcon { get; set; }
+
+    public string GetDefaultClass => Style switch
+    {
+        EAlertStyle.Success => "alert alert-success",
+        EAlertStyle.Danger => "alert alert-danger",
+        EAlertStyle.Warning => "alert alert-warning",
+        EAlertStyle.Info => "alert alert-info",
+        _ => "alert alert-primary"
+    };
+
+    private Dictionary<string, object> GetParameters()
+    {
+        return new Dictionary<string, object>
+            {
+                ["Style"] = Style,
+                ["Variant"] = Variant,
+                ["ChildContent"] = ChildContent,
+                ["ShowIcon"] = ShowIcon
+            };
+    }
+}

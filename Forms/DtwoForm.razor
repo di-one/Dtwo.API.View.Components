@@ -1,0 +1,141 @@
+﻿@using System.Reflection
+@typeparam TValue
+
+<DtwoFieldLayout Text=@FormData.Title>
+    <DtwoStack Gap="1rem">
+
+@foreach (var dataField in m_dataTypes)
+{
+        <DtwoGrid AlignItems="EAlignItems.Center">
+            <DtwoGridItem Size="12" SizeMD="4">
+                    <DtwoLabel Text="@dataField.Key" Component="@dataField.Value.Name" />
+            </DtwoGridItem>
+            <DtwoGridItem Size="12" SizeMD="8">
+
+    @switch (dataField.Value.PropertyType)
+    {
+        case Type t when t == typeof(string):
+                    <DtwoTextBox
+                        Change=@(value => OnChange(dataField.Key, value))
+                        Value=@((string)dataField.Value.GetValue(Value))
+                        Name=@dataField.Value.Name/>
+              break;
+        case Type t when t == typeof(int):
+                    <DtwoNumeric
+                        TValue=int
+                        Change=@(value => OnChange(dataField.Key, value))
+                        Value=@((int)dataField.Value.GetValue(Value))
+                        Name=@dataField.Value.Name/>
+              break;
+        case Type t when t == typeof(float):
+                    <DtwoNumeric TValue=float
+                         Change=@(value => OnChange(dataField.Key, value))
+                         Value=(float)dataField.Value.GetValue(Value)
+                         Name=@dataField.Value.Name />
+            break;
+        case Type t when t == typeof(double):
+                    <DtwoNumeric TValue=double
+                         Change=@(value => OnChange(dataField.Key, value))
+                         Value=@((double)dataField.Value.GetValue(Value))
+                         Name=@dataField.Value.Name />
+            break;
+        case Type t when t == typeof(decimal):
+                    <DtwoNumeric TValue=decimal
+                         Change=@(value => OnChange(dataField.Key, value))
+                         Value=@((decimal)dataField.Value.GetValue(Value))
+                         Name=@dataField.Value.Name />
+            break;
+
+        case Type t when t == typeof(bool):
+                    <DtwoSwitch
+                        Change=@(value => OnChange(dataField.Key, value))
+                        Value=@((bool)dataField.Value.GetValue(Value))
+                        Name=@dataField.Value.Name/>
+            break;
+        case Type t when t == typeof(API.InputKey):
+                       <DtwoInputField
+                        Change=@(value => OnChange(dataField.Key, value))
+                        Value=@((API.InputKey)dataField.Value.GetValue(Value))
+                        Name=@dataField.Value.Name/>
+            break;
+    }
+            </DtwoGridItem>
+        </DtwoGrid>
+}
+
+    </DtwoStack>
+</DtwoFieldLayout>
+
+@code {
+    [Parameter] public TValue Value { get; set; }
+    [Parameter] public FormData FormData { get; set; }
+    // Todo save button
+
+    private Dictionary<string, PropertyInfo> m_dataTypes = new Dictionary<string, PropertyInfo>();
+    private Dictionary<string, object> m_values = new Dictionary<string, object>();
+    private Dictionary<string, FormData.Field> m_fields = new Dictionary<string, FormData.Field>();
+
+
+    protected override void OnInitialized()
+    {
+        RefreshReflectionInfos();
+    }
+
+    private void RefreshReflectionInfos()
+    {
+        m_dataTypes.Clear();
+
+        var data = FormCache.GetCache<TValue>(() =>
+        {
+            Dictionary<string, PropertyInfo> data = new Dictionary<string, PropertyInfo>();
+            var type = Value.GetType();
+            var properties = type.GetProperties();
+
+            foreach (var property in properties)
+            {
+                var fielData = FormData.Fields.FirstOrDefault(f => f.FieldAsmName == property.Name);
+
+                if (fielData == null)
+                    continue;
+
+                data.Add(fielData.Title, property);
+                m_fields.Add(fielData.Title, fielData);
+            }
+
+            return data;
+        });
+
+        m_dataTypes = data == null ? new Dictionary<string, PropertyInfo>() : data;
+
+        foreach (var dataField in m_dataTypes)
+        {
+            m_values.Add(dataField.Key, dataField.Value.GetValue(Value));
+        }
+
+        this.StateHasChanged();
+    }
+
+    private void OnChange(string title, object newValue)
+    {
+        var field = m_fields[title];
+
+        var dataType = m_dataTypes[field.Title];
+        object setValue = newValue;
+
+        if (field.Validation != null)
+        {
+            if (field.Validation.Invoke(newValue))
+            {
+                // Ok
+            }
+            else
+            {
+                // Set old value
+                setValue = m_values[field.Title];
+            }
+        }
+
+        m_values[field.Title] = setValue;
+        dataType.SetValue(Value, setValue);
+    }
+}

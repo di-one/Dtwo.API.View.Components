@@ -1,0 +1,25 @@
+﻿
+@if (Item != null)
+{
+    <div class="menu-item">
+        <div class="menu-item__header">
+            <i class="fas fa-home"></i> @Item.Name
+        </div>
+        @if (Item.Childs != null && Item.Childs.Any())
+        {
+            <ul class="menu-item__children">
+                @foreach (var child in Item.Childs)
+                {
+                    <li>
+                        <MainLayoutSidebarEntry Item="child" />
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public MainLayoutSettings.SidebarEntry Item { get; set; }
+}
