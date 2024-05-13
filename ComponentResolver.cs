@@ -21,32 +21,42 @@ namespace Dtwo.API.View.Components
 
         private static void FindAndRegisterMap(Assembly componentAsm)
         {
-            Dictionary<Type, Type> componentMappings = new();
+            Dictionary <Type, Type> componentMappings = new();
 
-            foreach (var type in componentAsm.GetTypes())
+            try
             {
-                if (!type.FullName.Contains("Dtwo") || type.IsAbstract || !type.IsClass)
-                    continue;
-
-                var interfaces = type.GetInterfaces();
-                foreach (var i in interfaces)
+                foreach (var type in componentAsm.GetTypes())
                 {
-                    var baseInterface = i.GetInterfaces().FirstOrDefault(b => b == typeof(IComponent));
-                    if (baseInterface != null)
+                    if (!type.FullName.Contains("Dtwo") || type.IsAbstract || !type.IsClass)
+                        continue;
+
+                    var interfaces = type.GetInterfaces();
+                    foreach (var i in interfaces)
                     {
-                        Type interfaceType = i.IsGenericType ? i.GetGenericTypeDefinition() : i;
-                        if (!componentMappings.ContainsKey(interfaceType))
+                        var baseInterface = i.GetInterfaces().FirstOrDefault(b => b == typeof(IComponent));
+                        if (baseInterface != null)
                         {
-                            componentMappings.Add(interfaceType, type);
-                        }
-                        // Ensure we handle also non-generic interfaces
-                        if (i.IsGenericType && !componentMappings.ContainsKey(i))
-                        {
-                            componentMappings.Add(i, type);
+                            Type interfaceType = i.IsGenericType ? i.GetGenericTypeDefinition() : i;
+                            if (!componentMappings.ContainsKey(interfaceType))
+                            {
+                                componentMappings.Add(interfaceType, type);
+                            }
+                            // Ensure we handle also non-generic interfaces
+                            if (i.IsGenericType && !componentMappings.ContainsKey(i))
+                            {
+                                componentMappings.Add(i, type);
+                            }
                         }
                     }
                 }
             }
+            catch (Exception e)
+            {
+                LogManager.LogError("Error while loading components : " + e.Message);
+                Debug.WriteLine("Error while loading components : " + e.Message);
+            }
+
+            Debug.WriteLine("Component mappings found : " + componentMappings.Count);
             m_componentMappings = componentMappings;
         }
 
@@ -56,14 +66,17 @@ namespace Dtwo.API.View.Components
             // Try with exact type first
             if (m_componentMappings.TryGetValue(requestedType, out var componentType))
             {
+                Debug.WriteLine("Add component");
                 return (T)Activator.CreateInstance(componentType);
             }
             // If the exact type fails and it's a generic type, try with the generic type definition
             if (requestedType.IsGenericType && m_componentMappings.TryGetValue(requestedType.GetGenericTypeDefinition(), out componentType))
             {
+                Debug.WriteLine("Add component");
                 return (T)Activator.CreateInstance(componentType.MakeGenericType(requestedType.GetGenericArguments()));
             }
 
+            Debug.WriteLine("Missing component : " + requestedType.FullName);
             LogManager.LogError("Missing component : " + requestedType.FullName);
             return default;
         }
