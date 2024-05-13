@@ -18,45 +18,52 @@
                     <DtwoTextBox
                         Change=@(value => OnChange(dataField.Key, value))
                         Value=@((string)dataField.Value.GetValue(Value))
-                        Name=@dataField.Value.Name/>
+                        Name=@dataField.Value.Name
+                        Disabled=@Disabled />
               break;
         case Type t when t == typeof(int):
                     <DtwoNumeric
                         TValue=int
                         Change=@(value => OnChange(dataField.Key, value))
                         Value=@((int)dataField.Value.GetValue(Value))
-                        Name=@dataField.Value.Name/>
+                        Name=@dataField.Value.Name
+                        Disabled=@Disabled/>
               break;
         case Type t when t == typeof(float):
                     <DtwoNumeric TValue=float
                          Change=@(value => OnChange(dataField.Key, value))
                          Value=(float)dataField.Value.GetValue(Value)
-                         Name=@dataField.Value.Name />
+                         Name=@dataField.Value.Name
+                         Disabled=@Disabled />
             break;
         case Type t when t == typeof(double):
                     <DtwoNumeric TValue=double
                          Change=@(value => OnChange(dataField.Key, value))
                          Value=@((double)dataField.Value.GetValue(Value))
-                         Name=@dataField.Value.Name />
+                         Name=@dataField.Value.Name
+                         Disabled=@Disabled />
             break;
         case Type t when t == typeof(decimal):
                     <DtwoNumeric TValue=decimal
                          Change=@(value => OnChange(dataField.Key, value))
                          Value=@((decimal)dataField.Value.GetValue(Value))
-                         Name=@dataField.Value.Name />
+                         Name=@dataField.Value.Name
+                         Disabled=@Disabled />
             break;
 
         case Type t when t == typeof(bool):
                     <DtwoSwitch
                         Change=@(value => OnChange(dataField.Key, value))
                         Value=@((bool)dataField.Value.GetValue(Value))
-                        Name=@dataField.Value.Name/>
+                        Name=@dataField.Value.Name
+                        Disabled=@Disabled />
             break;
         case Type t when t == typeof(API.InputKey):
                        <DtwoInputField
                         Change=@(value => OnChange(dataField.Key, value))
                         Value=@((API.InputKey)dataField.Value.GetValue(Value))
-                        Name=@dataField.Value.Name/>
+                        Name=@dataField.Value.Name
+                        Disabled=@Disabled  />
             break;
     }
             </DtwoGridItem>
@@ -69,6 +76,7 @@
 @code {
     [Parameter] public TValue Value { get; set; }
     [Parameter] public FormData FormData { get; set; }
+    [Parameter] public bool Disabled { get; set; } = false;
     // Todo save button
 
     private Dictionary<string, PropertyInfo> m_dataTypes = new Dictionary<string, PropertyInfo>();
