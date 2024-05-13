@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Documents\Dtwo_Git\Dtwo.API\Dtwo.API.csproj" />
+    <ProjectReference Include="..\Dtwo.API\Dtwo.API.csproj" />
   </ItemGroup>
 
 </Project>
