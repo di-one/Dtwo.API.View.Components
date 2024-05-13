@@ -66,18 +66,14 @@ namespace Dtwo.API.View.Components
             // Try with exact type first
             if (m_componentMappings.TryGetValue(requestedType, out var componentType))
             {
-                Debug.WriteLine("Add component");
                 return (T)Activator.CreateInstance(componentType);
             }
             // If the exact type fails and it's a generic type, try with the generic type definition
             if (requestedType.IsGenericType && m_componentMappings.TryGetValue(requestedType.GetGenericTypeDefinition(), out componentType))
             {
-                Debug.WriteLine("Add component");
                 return (T)Activator.CreateInstance(componentType.MakeGenericType(requestedType.GetGenericArguments()));
             }
 
-            Debug.WriteLine("Missing component : " + requestedType.FullName);
-            LogManager.LogError("Missing component : " + requestedType.FullName);
             return default;
         }
     }
